@@ -1,5 +1,7 @@
 package com.example.estest.controller;
 
+import com.example.estest.EsService.SumAggregationService;
+import com.example.estest.entity.request.SumAggregationByDate;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
@@ -21,6 +23,8 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MatchQueryBuilder;
@@ -29,14 +33,10 @@ import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.metrics.sum.SumAggregationBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.joda.time.format.DateTimeFormat;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.text.DateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,10 +45,12 @@ import java.util.Map;
 public class TestController {
 
     private final RestHighLevelClient restHighLevelClient;
+    private final SumAggregationService sumAggregationService;
 
     @Autowired
-    public TestController(RestHighLevelClient restHighLevelClient) {
+    public TestController(RestHighLevelClient restHighLevelClient, SumAggregationService sumAggregationService) {
         this.restHighLevelClient = restHighLevelClient;
+        this.sumAggregationService = sumAggregationService;
     }
 
 
@@ -70,25 +72,34 @@ public class TestController {
     //创建索引
     @GetMapping(value = "createIndex")
     public CreateIndexResponse createIndex() {
-        CreateIndexRequest request = new CreateIndexRequest("twitter");
+        CreateIndexRequest request = new CreateIndexRequest("es_house_space");
         request.settings(Settings.builder()
                 .put("index.number_of_shards", 3)
                 .put("index.number_of_replicas", 2)
         );
-        Map<String, Object> jsonMap = new HashMap<>();
-        Map<String, Object> message = new HashMap<>();
-        message.put("type", "text");
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("message", message);
-        Map<String, Object> mapping = new HashMap<>();
-        mapping.put("properties", properties);
-        jsonMap.put("_doc", mapping);
-        request.mapping("_doc", jsonMap);
-        request.timeout(TimeValue.timeValueMinutes(2));
-        request.timeout("2m");
-
         CreateIndexResponse createIndexResponse = null;
         try {
+            XContentBuilder builder = XContentFactory.jsonBuilder();
+            builder.startObject();
+            {
+                builder.startObject("_doc");
+                {
+                    builder.startObject("properties");
+                    {
+                        builder.startObject("message");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                    }
+                    builder.endObject();
+                }
+                builder.endObject();
+            }
+            builder.endObject();
+            request.mapping("_doc", builder);
+            request.timeout(TimeValue.timeValueMinutes(2));
+            request.timeout("2m");
             createIndexResponse = restHighLevelClient.indices().create(request, RequestOptions.DEFAULT);
         } catch (IOException e) {
             e.printStackTrace();
@@ -241,5 +252,10 @@ public class TestController {
         return restHighLevelClient.search(request,RequestOptions.DEFAULT);
     }
 
+    //按时间段求和(度量聚合)
+    @PostMapping(value = "sumAggregationByDateI")
+    public SearchResponse sumAggregationByDateI(@RequestBody SumAggregationByDate sumAggregationByDate) {
+        return sumAggregationService.sumAggregationByDate(sumAggregationByDate);
+    }
 
 }
