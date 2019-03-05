@@ -22,6 +22,8 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
@@ -217,17 +219,24 @@ public class TestController {
     //按时间段求和(度量聚合)
     @GetMapping(value = "sumAggregationByDate")
     public SearchResponse sumAggregationByDate() throws IOException {
+        //指定文档
         SearchRequest request = new SearchRequest("house_space").types("doc");
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-//        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+        //条件池
+        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+        //如果还需要指定某个状态
+        MatchQueryBuilder matchQueryBuilder=QueryBuilders.matchQuery("house_space_status","RENTABLE");
+        boolQueryBuilder.must(matchQueryBuilder);
         //指定范围(注意时间格式)
-        RangeQueryBuilder rangeQueryBuilder=QueryBuilders.rangeQuery("modify_time")
+        RangeQueryBuilder rangeQueryBuilder=QueryBuilders.rangeQuery("create_time")
                 .from("2017-05-16T21:57:09")
-                .to("2018-05-16T21:57:09");
-//        boolQueryBuilder.must(rangeQueryBuilder);
-        //计算和
+                .to("2019-05-16T21:57:09");
+        //加入搜索条件池
+        boolQueryBuilder.must(rangeQueryBuilder);
+        //指定聚合
         SumAggregationBuilder sumAggregationBuilder=AggregationBuilders.sum("sumPrice").field("rental_price");
-        searchSourceBuilder.query(rangeQueryBuilder).aggregation(sumAggregationBuilder);
+        //搜索
+        searchSourceBuilder.query(boolQueryBuilder).aggregation(sumAggregationBuilder);
         request.source(searchSourceBuilder);
         return restHighLevelClient.search(request,RequestOptions.DEFAULT);
     }
