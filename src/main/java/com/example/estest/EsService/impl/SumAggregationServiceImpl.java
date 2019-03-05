@@ -37,7 +37,7 @@ public class SumAggregationServiceImpl implements SumAggregationService {
         SearchResponse searchResponse = null;
         //索引名
         String indexName = sumAggregationByDate.getIndexName();
-        //类型
+        //类型(默认"docs")
         String types = sumAggregationByDate.getTypes();
         //match条件
         List<Matches> matchsList = sumAggregationByDate.getMatches();
