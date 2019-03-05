@@ -11,6 +11,8 @@ import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.support.IndicesOptions;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.action.update.UpdateRequest;
@@ -20,12 +22,19 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.RangeQueryBuilder;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.metrics.sum.SumAggregationBuilder;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.joda.time.format.DateTimeFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.text.DateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -183,6 +192,7 @@ public class TestController {
                 "posts",
                 "doc",
                 "1");
+        request.doc(new HashMap());
         UpdateResponse updateResponse = null;
         try {
             updateResponse = restHighLevelClient.update(request, RequestOptions.DEFAULT);
@@ -191,6 +201,35 @@ public class TestController {
         }
         return updateResponse;
 
+    }
+
+    //求和(度量聚合)
+    @GetMapping(value = "sumAggregation")
+    public SearchResponse sumAggregation() throws IOException {
+        SearchRequest request = new SearchRequest("house_space").types("doc");
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder().size(0);
+        SumAggregationBuilder sumAggregationBuilder=AggregationBuilders.sum("sumPrice").field("rental_price");
+        searchSourceBuilder.aggregation(sumAggregationBuilder);
+        request.source(searchSourceBuilder);
+        return restHighLevelClient.search(request,RequestOptions.DEFAULT);
+    }
+
+    //按时间段求和(度量聚合)
+    @GetMapping(value = "sumAggregationByDate")
+    public SearchResponse sumAggregationByDate() throws IOException {
+        SearchRequest request = new SearchRequest("house_space").types("doc");
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+//        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+        //指定范围(注意时间格式)
+        RangeQueryBuilder rangeQueryBuilder=QueryBuilders.rangeQuery("modify_time")
+                .from("2017-05-16T21:57:09")
+                .to("2018-05-16T21:57:09");
+//        boolQueryBuilder.must(rangeQueryBuilder);
+        //计算和
+        SumAggregationBuilder sumAggregationBuilder=AggregationBuilders.sum("sumPrice").field("rental_price");
+        searchSourceBuilder.query(rangeQueryBuilder).aggregation(sumAggregationBuilder);
+        request.source(searchSourceBuilder);
+        return restHighLevelClient.search(request,RequestOptions.DEFAULT);
     }
 
 
