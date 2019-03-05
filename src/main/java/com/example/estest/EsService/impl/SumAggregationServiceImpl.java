@@ -40,7 +40,7 @@ public class SumAggregationServiceImpl implements SumAggregationService {
         //类型(默认"docs")
         String types = sumAggregationByDate.getTypes();
         //match条件
-        List<Matches> matchsList = sumAggregationByDate.getMatches();
+        List<Matches> matchList = sumAggregationByDate.getMatches();
         //时间字段名
         String colName = sumAggregationByDate.getColName();
         //起始时间
@@ -60,8 +60,8 @@ public class SumAggregationServiceImpl implements SumAggregationService {
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
 
         //如果还需要指定某个状态,循环遍历导入条件
-        if (!matchsList.isEmpty()) {
-            for (Matches matches : matchsList) {
+        if (!matchList.isEmpty()) {
+            for (Matches matches : matchList) {
                 //match条件名
                 String matchName = matches.getMatchName();
                 //match条件值
