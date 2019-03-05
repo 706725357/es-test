@@ -31,7 +31,7 @@ public class SumAggregationServiceImpl implements SumAggregationService {
         this.restHighLevelClient = restHighLevelClient;
     }
 
-    //统计一个时间段内某field的和(单match条件)
+    //统计一个时间段内某field的和
     @Override
     public SearchResponse sumAggregationByDate(SumAggregationByDate sumAggregationByDate) {
         SearchResponse searchResponse = null;

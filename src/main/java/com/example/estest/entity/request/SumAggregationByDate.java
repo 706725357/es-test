@@ -1,7 +1,6 @@
 package com.example.estest.entity.request;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
 
 public class SumAggregationByDate implements Serializable {
