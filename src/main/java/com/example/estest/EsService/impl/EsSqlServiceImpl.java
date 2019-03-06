@@ -21,6 +21,6 @@ public class EsSqlServiceImpl implements EsSqlService {
     public JSONObject sqlRequest(String sql) {
         JSONObject body = new JSONObject();
         body.put("query", sql);
-        return restTemplate.postForObject(PREFIX,sql,JSONObject.class);
+        return restTemplate.postForObject(PREFIX,body,JSONObject.class);
     }
 }
