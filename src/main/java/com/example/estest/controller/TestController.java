@@ -1,5 +1,6 @@
 package com.example.estest.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.example.estest.EsService.SumAggregationService;
 import com.example.estest.entity.request.SumAggregationByDate;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
@@ -35,6 +36,7 @@ import org.elasticsearch.search.aggregations.metrics.sum.SumAggregationBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -46,13 +48,23 @@ public class TestController {
 
     private final RestHighLevelClient restHighLevelClient;
     private final SumAggregationService sumAggregationService;
+    private final RestTemplate restTemplate;
 
     @Autowired
-    public TestController(RestHighLevelClient restHighLevelClient, SumAggregationService sumAggregationService) {
+    public TestController(RestHighLevelClient restHighLevelClient, SumAggregationService sumAggregationService, RestTemplate restTemplate) {
         this.restHighLevelClient = restHighLevelClient;
         this.sumAggregationService = sumAggregationService;
+        this.restTemplate = restTemplate;
     }
 
+    //sql方式
+    @GetMapping(value = "sqlSearch")
+    public JSONObject sql() {
+        JSONObject sql = new JSONObject();
+        sql.put("query", "select sum(rental_price) from house_space");
+        System.out.println(sql.toString());
+        return restTemplate.postForObject("http://118.25.52.191:9200/_xpack/sql?format=json",sql,JSONObject.class);
+    }
 
     //查找索引
     @GetMapping(value = "searchIndex")
