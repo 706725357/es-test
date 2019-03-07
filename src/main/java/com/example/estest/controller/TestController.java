@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.example.estest.EsService.EsSqlService;
 import com.example.estest.EsService.SumAggregationService;
 import com.example.estest.entity.request.SumAggregationByDate;
+import org.elasticsearch.action.admin.indices.alias.Alias;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
@@ -82,11 +83,12 @@ public class TestController {
     //创建索引
     @GetMapping(value = "createIndex")
     public CreateIndexResponse createIndex() {
-        CreateIndexRequest request = new CreateIndexRequest("es_house_space");
+        CreateIndexRequest request = new CreateIndexRequest("es_house_space_v0");
         request.settings(Settings.builder()
-                .put("index.number_of_shards", 3)
-                .put("index.number_of_replicas", 2)
+                .put("index.number_of_shards", 5)
+                .put("index.number_of_replicas", 1)
         );
+        request.alias(new Alias("es_house_space"));
         CreateIndexResponse createIndexResponse = null;
         try {
             XContentBuilder builder = XContentFactory.jsonBuilder();
@@ -96,12 +98,458 @@ public class TestController {
                 {
                     builder.startObject("properties");
                     {
-                        builder.startObject("message");
+                        builder.startObject("enterDate");
+                        {
+                            builder.field("type", "date");
+                        }
+                        builder.endObject();
+                        builder.startObject("houseSpaceId");
+                        {
+                            builder.field("type", "keyword");
+                        }
+                        builder.endObject();
+                        builder.startObject("houseSpaceManagerId");
+                        {
+                            builder.field("type", "keyword");
+                        }
+                        builder.endObject();
+                        builder.startObject("tenantId");
+                        {
+                            builder.field("type", "keyword");
+                        }
+                        builder.endObject();
+                        builder.startObject("tenantName");
                         {
                             builder.field("type", "text");
                         }
                         builder.endObject();
+                        builder.startObject("tenantPhone");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("landlordId");
+                        {
+                            builder.field("type", "keyword");
+                        }
+                        builder.endObject();
+                        builder.startObject("landlordName");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("landlordPhone");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("inputPersonnelId");
+                        {
+                            builder.field("type", "keyword");
+                        }
+                        builder.endObject();
+                        builder.startObject("inputPersonnelName");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("inputPersonnelPhone");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("housekeeperId");
+                        {
+                            builder.field("type", "keyword");
+                        }
+                        builder.endObject();
+                        builder.startObject("housekeeperName");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("housekeeperPhone");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("housekeeperAdjustTime");
+                        {
+                            builder.field("type", "date");
+                        }
+                        builder.endObject();
+                        builder.startObject("housekeeperAdjustTimeFormat");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("commentContent");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("starts");
+                        {
+                            builder.field("type", "integer");
+                        }
+                        builder.endObject();
+                        builder.startObject("buildingArea");
+                        {
+                            builder.field("type", "integer");
+                        }
+                        builder.endObject();
+                        builder.startObject("houseSpaceManagerArea");
+                        {
+                            builder.field("type", "integer");
+                        }
+                        builder.endObject();
+                        builder.startObject("houseSpaceSource");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("getPrice");
+                        {
+                            builder.field("type", "integer");
+                        }
+                        builder.endObject();
+                        builder.startObject("buildYear");
+                        {
+                            builder.field("type", "integer");
+                        }
+                        builder.endObject();
+                        builder.startObject("companyId");
+                        {
+                            builder.field("type", "keyword");
+                        }
+                        builder.endObject();
+                        builder.startObject("companyName");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("insuranceStatus");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("insuranceStatusChinese");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("province");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("provinceId");
+                        {
+                            builder.field("type", "keyword");
+                        }
+                        builder.endObject();
+                        builder.startObject("city");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("cityId");
+                        {
+                            builder.field("type", "keyword");
+                        }
+                        builder.endObject();
+                        builder.startObject("district");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("districtId");
+                        {
+                            builder.field("type", "keyword");
+                        }
+                        builder.endObject();
+                        builder.startObject("road");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("blockName");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("blockId");
+                        {
+                            builder.field("type", "keyword");
+                        }
+                        builder.endObject();
+                        builder.startObject("buildingNo");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("unitNo");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("roomNo");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("longitude");
+                        {
+                            builder.field("type", "geo_point");
+                        }
+                        builder.endObject();
+                        builder.startObject("latitude");
+                        {
+                            builder.field("type", "geo_point");
+                        }
+                        builder.endObject();
+                        builder.startObject("location");
+                        {
+                            builder.field("type", "nested");
+                            builder.startObject("properties");
+                            {
+                                builder.startObject("lat");
+                                builder.field("type", "geo_point");
+                                builder.endObject();
+                                builder.startObject("lon");
+                                builder.field("type", "geo_point");
+                                builder.endObject();
+                            }
+                            builder.endObject();
+                        }
+                        builder.endObject();
+                        builder.startObject("locationStr");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("zone");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("zoneId");
+                        {
+                            builder.field("type", "keyword");
+                        }
+                        builder.endObject();
+                        builder.startObject("zoneManagerId");
+                        {
+                            builder.field("type", "keyword");
+                        }
+                        builder.endObject();
+                        builder.startObject("zoneManagerName");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("zoneManagerPhone");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("zoneManagerAdjustTime");
+                        {
+                            builder.field("type", "date");
+                        }
+                        builder.endObject();
+                        builder.startObject("zoneManagerAdjustTimeFormat");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("floorHeight");
+                        {
+                            builder.field("type", "integer");
+                        }
+                        builder.endObject();
+                        builder.startObject("currentFloor");
+                        {
+                            builder.field("type", "integer");
+                        }
+                        builder.endObject();
+                        builder.startObject("decorateType");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("decorateTypeChinese");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("countNumber");
+                        {
+                            builder.field("type", "integer");
+                        }
+                        builder.endObject();
+                        builder.startObject("bedroomNumber");
+                        {
+                            builder.field("type", "integer");
+                        }
+                        builder.endObject();
+                        builder.startObject("livingRoomNumber");
+                        {
+                            builder.field("type", "integer");
+                        }
+                        builder.endObject();
+                        builder.startObject("kitchenNumber");
+                        {
+                            builder.field("type", "integer");
+                        }
+                        builder.endObject();
+                        builder.startObject("toiletNumber");
+                        {
+                            builder.field("type", "integer");
+                        }
+                        builder.endObject();
+                        builder.startObject("houseSpaceManagerType");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("houseSpaceManagerTypeChinese");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("rentType");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("rentTypeChinese");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("propertyType");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("propertyTypeChinese");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("houseSpaceType");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("houseSpaceTypeChinese");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("houseSpaceName");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("keywordAddress");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("direction");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("directionChinese");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("houseSpaceArea");
+                        {
+                            builder.field("type", "integer");
+                        }
+                        builder.endObject();
+                        builder.startObject("rentalPrice");
+                        {
+                            builder.field("type", "integer");
+                        }
+                        builder.endObject();
+                        builder.startObject("houseSpaceDescribe");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("businessId");
+                        {
+                            builder.field("type", "keyword");
+                        }
+                        builder.endObject();
+                        builder.startObject("houseSpaceStatus");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("houseSpaceStatusChinese");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("houseSpaceFeatureList");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("houseSpaceFeatureListChinese");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("createTimeFormat");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("createTime");
+                        {
+                            builder.field("type", "date");
+                        }
+                        builder.endObject();
+                        builder.startObject("houseSpaceKeyword");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("expectedRentalPrice");
+                        {
+                            builder.field("type", "integer");
+                        }
+                        builder.endObject();
+                        builder.startObject("originalRentType");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("customNumber");
+                        {
+                            builder.field("type", "text");
+                        }
+                        builder.endObject();
+                        builder.startObject("frontMoneyAmount");
+                        {
+                            builder.field("type", "integer");
+                        }
+                        builder.endObject();
+                        builder.startObject("regulationFrontMoneyAmount");
+                        {
+                            builder.field("type", "integer");
+                        }
+                        builder.endObject();
                     }
+
                     builder.endObject();
                 }
                 builder.endObject();
@@ -267,5 +715,6 @@ public class TestController {
     public SearchResponse sumAggregationByDateI(@RequestBody SumAggregationByDate sumAggregationByDate) {
         return sumAggregationService.sumAggregationByDate(sumAggregationByDate);
     }
+    
 
 }

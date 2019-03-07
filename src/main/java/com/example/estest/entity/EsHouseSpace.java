@@ -1,5 +1,7 @@
 package com.example.estest.entity;
 
+import com.example.estest.annotation.EsMappings;
+import com.example.estest.enums.EnumFieldTypes;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -23,12 +25,14 @@ public class EsHouseSpace implements Serializable {
     /**
      * 房源的id
      */
+    @EsMappings(objectName = "houseSpaceId",fieldType = EnumFieldTypes.KEYWORD)
     private String houseSpaceId;
 
 
     /**
      * 整套房子的id
      */
+    @EsMappings(objectName = "houseSpaceManagerId",fieldType = EnumFieldTypes.KEYWORD)
     private String houseSpaceManagerId;
 
 
